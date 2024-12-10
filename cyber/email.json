@@ -1,0 +1,6 @@
+[
+    { "text": "Congratulations! You've won a prize!", "isSpam": true },
+    { "text": "Meeting schedule for tomorrow", "isSpam": false },
+    { "text": "Important update regarding your account", "isSpam": false },
+    { "text": "Exclusive offer just for you", "isSpam": true }
+]
