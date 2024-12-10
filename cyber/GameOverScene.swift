@@ -1,64 +1,82 @@
 import SpriteKit
 
 class GameOverScene: SKScene {
-    var finalScore: Int = 0
-    var highScore: Int = 0
-
+    
+    var score: Int = 0
+    var highScore: Int = UserDefaults.standard.integer(forKey: "HighScore")
+    
     override func didMove(to view: SKView) {
         backgroundColor = .white
-
-        // Display final score
-        let scoreLabel = SKLabelNode(text: "Your Score: \(finalScore)")
+        setupGameOverText()
+        setupScoreLabels()
+        setupButtons()
+    }
+    
+    private func setupGameOverText() {
+        let gameOverLabel = SKLabelNode(text: "Game Over")
+        gameOverLabel.fontName = "AvenirNext-Bold"
+        gameOverLabel.fontSize = 48
+        gameOverLabel.fontColor = .red
+        gameOverLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.7)
+        addChild(gameOverLabel)
+    }
+    
+    private func setupScoreLabels() {
+        // Score Label
+        let scoreLabel = SKLabelNode(text: "Score: \(score)")
         scoreLabel.fontName = "AvenirNext-Bold"
-        scoreLabel.fontSize = 40
+        scoreLabel.fontSize = 36
         scoreLabel.fontColor = .black
-        scoreLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.6)
+        scoreLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
         addChild(scoreLabel)
-
-        // Display high score
+        
+        // High Score Label
         let highScoreLabel = SKLabelNode(text: "High Score: \(highScore)")
         highScoreLabel.fontName = "AvenirNext-Bold"
-        highScoreLabel.fontSize = 30
+        highScoreLabel.fontSize = 24
         highScoreLabel.fontColor = .black
-        highScoreLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
+        highScoreLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.4)
         addChild(highScoreLabel)
-
-        // "Menu" button
-        let menuButton = SKLabelNode(text: "Menu")
-        menuButton.name = "menuButton"
-        menuButton.fontName = "AvenirNext-Bold"
-        menuButton.fontSize = 30
-        menuButton.fontColor = .blue
-        menuButton.position = CGPoint(x: size.width / 2 - 100, y: size.height * 0.3)
-        addChild(menuButton)
-
-        // "Play Again" button
-        let playAgainButton = SKLabelNode(text: "Play Again")
-        playAgainButton.name = "playAgainButton"
-        playAgainButton.fontName = "AvenirNext-Bold"
-        playAgainButton.fontSize = 30
-        playAgainButton.fontColor = .green
-        playAgainButton.position = CGPoint(x: size.width / 2 + 100, y: size.height * 0.3)
-        addChild(playAgainButton)
     }
-
+    
+    private func setupButtons() {
+        // Menu Button
+        let menuButton = SKLabelNode(text: "Menu")
+        menuButton.fontName = "AvenirNext-Bold"
+        menuButton.fontSize = 24
+        menuButton.fontColor = .blue
+        menuButton.position = CGPoint(x: size.width / 2 - 50, y: size.height * 0.3)
+        menuButton.name = "menuButton"
+        addChild(menuButton)
+        
+        // Replay Button
+        let replayButton = SKLabelNode(text: "Play Again")
+        replayButton.fontName = "AvenirNext-Bold"
+        replayButton.fontSize = 24
+        replayButton.fontColor = .blue
+        replayButton.position = CGPoint(x: size.width / 2 + 50, y: size.height * 0.3)
+        replayButton.name = "replayButton"
+        addChild(replayButton)
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
-        let tappedNode = atPoint(location)
-
-        if tappedNode.name == "menuButton" {
-            print("Menu button tapped!")
-            // Transition to the GameScene
-            let mainMenuScene = GameScene(size: self.size)
-            let transition = SKTransition.fade(withDuration: 1.0)
-            self.view?.presentScene(mainMenuScene, transition: transition)
-        } else if tappedNode.name == "playAgainButton" {
-            print("Play Again button tapped!")
-            // Transition to the PlayGameScene
-            let playGameScene = PlayGameScene(size: self.size)
-            let transition = SKTransition.fade(withDuration: 1.0)
-            self.view?.presentScene(playGameScene, transition: transition)
+        
+        if let node = atPoint(location) as? SKLabelNode {
+            if node.name == "menuButton" {
+                // Go back to the main menu
+                if let scene = GameScene(fileNamed: "GameScene") {
+                    scene.scaleMode = .aspectFill
+                    view?.presentScene(scene)
+                }
+            } else if node.name == "replayButton" {
+                // Restart the game
+                if let scene = PlayGameScene(fileNamed: "PlayGameScene") {
+                    scene.scaleMode = .aspectFill
+                    view?.presentScene(scene)
+                }
+            }
         }
     }
 }

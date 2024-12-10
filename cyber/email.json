@@ -1,6 +1,44 @@
 [
-    { "text": "Congratulations! You've won a prize!", "isSpam": true },
-    { "text": "Meeting schedule for tomorrow", "isSpam": false },
-    { "text": "Important update regarding your account", "isSpam": false },
-    { "text": "Exclusive offer just for you", "isSpam": true }
+    {
+        "job_id": 99,
+        "title": "IC&E Technician",
+        "location": "US, Stockton, CA",
+        "department": "Oil & Energy",
+        "salary_range": "95000-115000",
+        "company_profile": "Staffing & Recruiting done right for the Oil & Energy Industry...",
+        "description": "IC&E Technician | Bakersfield, CA Mt. Poso...Principal Duties...",
+        "isSpam": true
+    },
+    {
+        "job_id": 100,
+        "title": "Software Developer",
+        "location": "US, San Francisco, CA",
+        "department": "Technology",
+        "salary_range": "120000-150000",
+        "company_profile": "Innovative Tech Solutions Inc.",
+        "description": "Software Developer needed to design and implement software systems...",
+        "isSpam": false
+    },
+    {
+        "job_id": 101,
+        "title": "Marketing Intern",
+        "location": "US, NY, New York",
+        "description": "Food52, a James Beard Award-winning food community, is seeking full- and part-time unpaid interns to join their team in New York City. As an intern, you'll assist with content management, support the Provisions by Food52 Affiliate Program, and help with PR, events, and administrative tasks. Responsibilities also include working with developers to document bugs and improvements. The ideal candidate is familiar with Food52’s editorial style, loves food, has strong attention to detail, and is a team player in a startup environment. Previous experience with content management systems is a plus.\n\nFood52 is a fast-growing company known for its partnerships with Whole Foods and Random House, and its feature in major outlets like the New York Times and NPR.",
+        "isSpam": false
+    },
+    {
+        "job_id": 102,
+        "title": "Customer Service - Cloud Video Production",
+        "location": "NZ, Auckland",
+        "description": "90 Seconds, the world's cloud video production service, is seeking a Project Manager to join their rapidly growing team. The role involves managing client communications, coordinating video projects, and overseeing freelance talent. You’ll work with global brands like PayPal and L’Oreal, ensuring smooth video production from planning to delivery. Ideal candidates will have excellent customer service skills, strong computer knowledge, and attention to detail. Previous project management or customer service experience is a plus. A video application is required to apply for the position.",
+        "isSpam": false
+    },
+    {
+        "job_id": 103,
+        "title": "Bill Review Manager",
+        "location": "US, FL, Fort Worth",
+        "description": "SpotSource Solutions LLC is seeking a Bill Review Manager to oversee operations in the Itemization Review department. Responsibilities include managing staff, ensuring quality control, and developing new processes. The role involves monitoring performance, handling HR duties, and ensuring compliance with company policies and client expectations. Candidates must have an RN license in Texas, experience in managing teams, and knowledge of ICD9/CPT. The position offers full benefits and requires strong leadership, organizational skills, and the ability to handle stressful situations.",
+        "isSpam": false
+    },
+    
 ]

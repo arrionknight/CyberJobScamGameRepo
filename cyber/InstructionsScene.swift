@@ -15,27 +15,31 @@ class InstructionsScene: SKScene {
 
     private func setupInstructions() {
         // Title for the instructions
-        let titleLabel = SKLabelNode(text: "Instructions")
+        let titleLabel = SKLabelNode(text: "Game Instructions")
         titleLabel.fontName = "AvenirNext-Bold"
         titleLabel.fontSize = 40
         titleLabel.fontColor = .black
-        titleLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.8)
+        titleLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.85)
         addChild(titleLabel)
         
-        // Instruction text
-        let instructionText = SKLabelNode(text: "Tap Play to start the game.\nAvoid spam and win!")
+        // Detailed instruction text
+        let instructionText = SKLabelNode(text: """
+            1. Tap "Play" to start the game.
+
+            """)
         instructionText.fontName = "AvenirNext"
-        instructionText.fontSize = 24
+        instructionText.fontSize = 22
         instructionText.fontColor = .darkGray
         instructionText.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
         instructionText.horizontalAlignmentMode = .center
-        instructionText.numberOfLines = 2
+        instructionText.verticalAlignmentMode = .center
+        instructionText.numberOfLines = 7
         addChild(instructionText)
     }
 
     private func setupBackButton() {
         // Back Button
-        let backButton = SKLabelNode(text: "Back")
+        let backButton = SKLabelNode(text: "Back to Menu")
         backButton.name = "backButton"
         backButton.fontName = "AvenirNext-Bold"
         backButton.fontSize = 30

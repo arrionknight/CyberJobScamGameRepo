@@ -1,84 +1,119 @@
 import SpriteKit
+import WebKit
+import UIKit
+
 
 class PlayGameScene: SKScene {
     
-    let emails = [
-        ("Subject: Job Offer\nDear User, We noticed your profile and have a special work-from-home job for you!", true),
-        ("Subject: Recruitment Alert\nBecome a data entry specialist and earn $500 daily. Apply now!", true),
-        ("Subject: Easy Job Opportunity\nJoin our team and make thousands per month. No experience needed.", true),
-        ("Subject: Work from Home\nCongratulations! You're pre-approved for a remote job. Click to proceed.", true),
-        ("Subject: Hiring Now\nEarn up to $10,000 monthly by working 2 hours daily. Sign up today!", true),
-        ("Subject: Career Opportunity\nWe reviewed your resume and would like to discuss a position with our company.", false),
-        ("Subject: Software Engineer Role\nWe are impressed with your skills and want to invite you to apply.", false),
-        ("Subject: Full-Time Role\nJoin our team as a project manager. Salary: $80K-$100K/year.", false),
-        ("Subject: Marketing Specialist Wanted\nImmediate opening for an experienced professional.", false),
-        ("Subject: Analyst Position\nWe’re hiring analysts to join our team. Competitive benefits included.", false)
-    ]
-    
+    var emails: [(String, Bool)] = []
     var currentEmail: SKLabelNode?
     var currentEmailIsSpam: Bool = false
     var health = 100
     var score = 0
+    var highScore = UserDefaults.standard.integer(forKey: "HighScore")
     var healthLabel: SKLabelNode!
     var scoreLabel: SKLabelNode!
     var swipeInProgress = false
     
     override func didMove(to view: SKView) {
         backgroundColor = .white
+        loadEmailsFromJSON()
+        setupLabels()
         spawnNewEmail()
-        setupHealthBar()
-        setupScoreLabel()
+        addBackgroundImage()
     }
+
+    func addBackgroundImage() {
+        // Create an SKSpriteNode for the background image
+        let background = SKSpriteNode(imageNamed: "email-bg1")  // Use the name of your image
+        background.position = CGPoint(x: size.width / 2, y: size.height / 2)  // Center the background
+        background.zPosition = -1  // Place the background behind other elements
+        addChild(background)
+    }
+    
+    func loadEmailsFromJSON() {
+        guard let filePath = Bundle.main.path(forResource: "email", ofType: "json") else {
+            print("email.json not found!")
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+            
+            // Update to handle the new JSON structure with multiple fields
+            if let jsonArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] {
+                for emailData in jsonArray {
+                    // Extract the necessary fields from the JSON
+                    if let title = emailData["title"] as? String,
+                       let location = emailData["location"] as? String,
+                       let description = emailData["description"] as? String,
+                       let isSpam = emailData["isSpam"] as? Bool {
+                        // Combine the extracted fields into a single string or use them separately
+                        let emailContent = "Title: \(title)\nLocation: \(location)\nDescription: \(description)"
+                        emails.append((emailContent, isSpam))
+                    }
+                }
+            }
+        } catch {
+            print("Error loading emails from JSON: \(error)")
+        }
+    }
+
+
     
     func spawnNewEmail() {
         currentEmail?.removeFromParent()
-        let randomIndex = Int.random(in: 0..<emails.count)
-        let email = emails[randomIndex]
-        currentEmailIsSpam = email.1
-        
-        let emailLabel = SKLabelNode(text: email.0)
-        emailLabel.fontName = "AvenirNext-Bold"
-        emailLabel.fontSize = 18
-        emailLabel.fontColor = .black
-        emailLabel.numberOfLines = 0
-        emailLabel.horizontalAlignmentMode = .center
-        emailLabel.preferredMaxLayoutWidth = size.width * 0.8
-        emailLabel.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(emailLabel)
-        
-        currentEmail = emailLabel
+            guard !emails.isEmpty else {
+                gameOver(isWin: true) // Transition to a win screen when no emails are left
+                return
+            }
+            
+            let randomIndex = Int.random(in: 0..<emails.count)
+            let email = emails.remove(at: randomIndex) // Prevent duplicate emails in the same session
+            currentEmailIsSpam = email.1
+            
+            let emailLabel = SKLabelNode(text: email.0)
+            emailLabel.fontName = "AvenirNext-Bold"
+            emailLabel.fontSize = 18
+            emailLabel.fontColor = .black
+            emailLabel.numberOfLines = 0
+            emailLabel.horizontalAlignmentMode = .center
+
+            // Set preferred max layout width to a percentage of the screen width
+            let maxWidth = size.width * 0.8
+            emailLabel.preferredMaxLayoutWidth = maxWidth
+            
+            // Ensure the text fits within the bounds
+            let labelHeight = emailLabel.calculateAccumulatedFrame().height
+            let screenHeight = size.height
+            let labelYPosition: CGFloat = screenHeight / 2 - labelHeight / 2
+            
+            emailLabel.position = CGPoint(x: size.width / 2, y: labelYPosition)
+            
+            addChild(emailLabel)
+            
+            currentEmail = emailLabel
+        }
+    
+    func setupLabels() {
+        healthLabel = createLabel(text: "Health: \(health)", fontColor: .red, yOffset: -20)
+        scoreLabel = createLabel(text: "Score: \(score)", fontColor: .blue, yOffset: -50)
     }
     
-    func setupHealthBar() {
-        healthLabel = SKLabelNode(text: "Health: \(health)")
-        healthLabel.fontName = "AvenirNext-Bold"
-        healthLabel.fontSize = 24
-        healthLabel.fontColor = .red
-        
+    private func createLabel(text: String, fontColor: UIColor, yOffset: CGFloat) -> SKLabelNode {
+        let label = SKLabelNode(text: text)
+        label.fontName = "AvenirNext-Bold"
+        label.fontSize = 24
+        label.fontColor = fontColor
+
         if let view = view {
             let safeAreaTop = view.safeAreaInsets.top
-            healthLabel.position = CGPoint(x: size.width / 2, y: size.height - safeAreaTop - 20)
+            label.position = CGPoint(x: size.width / 2, y: size.height - safeAreaTop + yOffset)
         } else {
-            healthLabel.position = CGPoint(x: size.width / 2, y: size.height - 50)
+            label.position = CGPoint(x: size.width / 2, y: size.height + yOffset)
         }
-        
-        addChild(healthLabel)
-    }
-    
-    func setupScoreLabel() {
-        scoreLabel = SKLabelNode(text: "Score: \(score)")
-        scoreLabel.fontName = "AvenirNext-Bold"
-        scoreLabel.fontSize = 24
-        scoreLabel.fontColor = .blue
-        
-        if let view = view {
-            let safeAreaTop = view.safeAreaInsets.top
-            scoreLabel.position = CGPoint(x: size.width / 2, y: size.height - safeAreaTop - 50)
-        } else {
-            scoreLabel.position = CGPoint(x: size.width / 2, y: size.height - 80)
-        }
-        
-        addChild(scoreLabel)
+        addChild(label)
+        return label
     }
     
     func updateHealth() {
@@ -89,20 +124,73 @@ class PlayGameScene: SKScene {
         scoreLabel.text = "Score: \(score)"
     }
     
+    func gameOver(isWin: Bool = false) {
+        // Store the high score if the current score is higher
+        if score > highScore {
+            highScore = score
+            UserDefaults.standard.set(highScore, forKey: "HighScore")
+        }
+        
+        removeAllChildren() // Remove all current game objects
+        
+        let gameOverText = isWin ? "You Win!" : "Game Over"
+        let gameOverLabel = SKLabelNode(text: gameOverText)
+        gameOverLabel.fontName = "AvenirNext-Bold"
+        gameOverLabel.fontSize = 48
+        gameOverLabel.fontColor = isWin ? .green : .red
+        gameOverLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.7)
+        addChild(gameOverLabel)
+        
+        let scoreLabel = SKLabelNode(text: "Score: \(score)")
+        scoreLabel.fontName = "AvenirNext-Bold"
+        scoreLabel.fontSize = 36
+        scoreLabel.fontColor = .black
+        scoreLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
+        addChild(scoreLabel)
+        
+        let highScoreLabel = SKLabelNode(text: "High Score: \(highScore)")
+        highScoreLabel.fontName = "AvenirNext-Bold"
+        highScoreLabel.fontSize = 24
+        highScoreLabel.fontColor = .black
+        highScoreLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.4)
+        addChild(highScoreLabel)
+        
+        let menuButton = SKLabelNode(text: "Menu")
+        menuButton.fontName = "AvenirNext-Bold"
+        menuButton.fontSize = 24
+        menuButton.fontColor = .blue
+        menuButton.position = CGPoint(x: size.width / 2 - 50, y: size.height * 0.3)
+        menuButton.name = "menuButton"
+        addChild(menuButton)
+        
+        let replayButton = SKLabelNode(text: "Play Again")
+        replayButton.fontName = "AvenirNext-Bold"
+        replayButton.fontSize = 24
+        replayButton.fontColor = .blue
+        replayButton.position = CGPoint(x: size.width / 2 + 50, y: size.height * 0.3)
+        replayButton.name = "replayButton"
+        addChild(replayButton)
+    }
+    
+    // Swipe detection code
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first, !swipeInProgress else { return }
+        
         let start = touch.previousLocation(in: self)
         let end = touch.location(in: self)
         
         let dx = end.x - start.x
         let dy = end.y - start.y
         
-        if abs(dx) > abs(dy) {
-            swipeInProgress = true
+        // Threshold for detecting a swipe (adjust as needed)
+        let swipeThreshold: CGFloat = 30.0
+        
+        if abs(dx) > abs(dy) && abs(dx) > swipeThreshold {
+            swipeInProgress = true // Prevent multiple detections
             if dx > 0 {
-                handleSwipe(isSpam: false) // Swipe right
+                handleSwipe(isSpam: false) // Swipe right (not spam)
             } else {
-                handleSwipe(isSpam: true)  // Swipe left
+                handleSwipe(isSpam: true)  // Swipe left (spam)
             }
         }
     }
@@ -122,13 +210,11 @@ class PlayGameScene: SKScene {
         }
         
         if health > 0 {
-            spawnNewEmail()
+            spawnNewEmail()  // Continue the game if health is still greater than 0
         } else {
-            gameOver()
+            gameOver()  // Call game over if health reaches 0
         }
     }
     
-    func gameOver() {
-        print("Game Over! Health reached 0.")
-    }
+
 }

@@ -29,9 +29,30 @@
 		2F0C89D52CE6069C005C7ECD /* cyberUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cyberUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2F1E14D92CFF5A8E005E79C5 /* Exceptions for "cyber" folder in "cyberTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CyberWalk.gif,
+			);
+			target = 2F0C89CA2CE6069C005C7ECD /* cyberTests */;
+		};
+		2F1E14DA2CFF5A8E005E79C5 /* Exceptions for "cyber" folder in "cyberUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CyberWalk.gif,
+			);
+			target = 2F0C89D42CE6069C005C7ECD /* cyberUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2F0C89B42CE6069A005C7ECD /* cyber */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2F1E14D92CFF5A8E005E79C5 /* Exceptions for "cyber" folder in "cyberTests" target */,
+				2F1E14DA2CFF5A8E005E79C5 /* Exceptions for "cyber" folder in "cyberUITests" target */,
+			);
 			path = cyber;
 			sourceTree = "<group>";
 		};
